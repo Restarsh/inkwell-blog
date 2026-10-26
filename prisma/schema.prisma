@@ -34,7 +34,8 @@ model Post {
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   comments Comment[]
-
+  viewers  PostViewer[]
+ 
   @@index([authorId])
   @@index([published, createdAt])
 }
@@ -52,4 +53,17 @@ model Comment {
 
   @@index([postId, createdAt])
   @@index([authorId])
+}
+
+model PostViewer {
+  id        String   @id @default(cuid())
+  viewerId  String
+  postId    String
+  lastSeen  DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, viewerId])
+  @@index([postId, lastSeen])
+  @@index([lastSeen])
 }
